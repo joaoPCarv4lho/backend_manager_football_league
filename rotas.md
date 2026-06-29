@@ -3,9 +3,18 @@
 - POST /api/v1/auth/register
 - POST /api/v1/auth/login
 - GET /api/v1/auth/me
-- PATCH /api/v1/auth/me/plan
 
 > As rotas de Players, Games e Finances exigem token JWT (header `Authorization: Bearer <token>`).
+
+
+**Rotas de Billing (Stripe)**
+
+- POST /api/v1/billing/checkout  (auth) — inicia assinatura do plano Pro
+- POST /api/v1/billing/portal    (auth) — portal de gerenciamento da assinatura
+- POST /api/v1/billing/webhook   (público, verificado por assinatura Stripe)
+
+> O plano Pro é concedido/revogado pelos webhooks do Stripe. Sem as chaves
+> `STRIPE_*` configuradas, checkout/portal/webhook retornam 503.
 
 
 **Rotas de Reports (plano Pro)**
