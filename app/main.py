@@ -4,8 +4,9 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.core.database import Base, engine
-from app.presentation.api.routes import players, games, finances, auth
-from app.presentation.api.deps import get_current_user
+from app.presentation.api.routes import players, games, finances, auth, reports
+from app.presentation.api.deps import get_current_user, require_plan
+from app.infrastructure.models.user import PlanEnum
 
 Base.metadata.create_all(bind=engine)
 
@@ -32,6 +33,14 @@ protected = [Depends(get_current_user)]
 app.include_router(players.router, prefix="/api/v1", tags=["Players"], dependencies=protected)
 app.include_router(games.router, prefix="/api/v1", tags=["Games"], dependencies=protected)
 app.include_router(finances.router, prefix="/api/v1", tags=["Finances"], dependencies=protected)
+
+# Relatórios: exclusivos do plano Pro
+app.include_router(
+    reports.router,
+    prefix="/api/v1",
+    tags=["Reports"],
+    dependencies=[Depends(require_plan(PlanEnum.pro))],
+)
 
 @app.get("/", summary="Endpoint raiz da aplicação")
 def root():
