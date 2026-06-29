@@ -1,3 +1,12 @@
+**Rotas de Auth**
+
+- POST /api/v1/auth/register
+- POST /api/v1/auth/login
+- GET /api/v1/auth/me
+
+> As rotas de Players, Games e Finances exigem token JWT (header `Authorization: Bearer <token>`).
+
+
 **Rotas de Player**
 
 - POST /api/v1/players/
