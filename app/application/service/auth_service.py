@@ -2,7 +2,7 @@
 
 from fastapi import HTTPException, status
 
-from app.infrastructure.models.user import User, PlanEnum
+from app.infrastructure.models.user import User
 from app.infrastructure.repositories.user_repository import UserRepository
 from app.domain.schemas.user import UserCreate, UserLogin, UserResponse, Token
 from app.core.security import hash_password, verify_password, create_access_token
@@ -39,10 +39,3 @@ class AuthService:
         """Autentica e gera o token de acesso"""
         user = self.authenticate(data.email, data.password)
         return Token(access_token=create_access_token(user.id))
-
-    def update_plan(self, user_id: int, plan) -> UserResponse:
-        """Altera o plano de assinatura de um usuário"""
-        user = self.repository.update_plan(user_id, PlanEnum(plan.value))
-        if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado")
-        return UserResponse.model_validate(user)

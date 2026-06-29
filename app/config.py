@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     APP_NAME: str = "Football League Management"
     DEBUG: bool = False
 
+    # Stripe (cobrança de assinaturas). Vazio = cobrança desabilitada.
+    STRIPE_SECRET_KEY: str = Field(default="", description="Chave secreta da API Stripe (sk_...)")
+    STRIPE_WEBHOOK_SECRET: str = Field(default="", description="Segredo de verificação do webhook Stripe (whsec_...)")
+    STRIPE_PRICE_PRO: str = Field(default="", description="ID do Price recorrente do plano Pro (price_...)")
+    FRONTEND_URL: str = Field(default="http://localhost:5173", description="URL base do frontend para redirecionos de checkout")
+
 
     class Config:
         env_file = ".env"

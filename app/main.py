@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.core.database import Base, engine
-from app.presentation.api.routes import players, games, finances, auth, reports
+from app.presentation.api.routes import players, games, finances, auth, reports, billing
 from app.presentation.api.deps import get_current_user, require_plan
 from app.infrastructure.models.user import PlanEnum
 
@@ -27,6 +27,8 @@ app.add_middleware(
 )
 
 app.include_router(auth.router, prefix="/api/v1", tags=["Auth"])
+# Cobrança: checkout/portal exigem auth (na própria rota); webhook é público (verificado por assinatura)
+app.include_router(billing.router, prefix="/api/v1", tags=["Billing"])
 
 # Rotas de dados exigem usuário autenticado
 protected = [Depends(get_current_user)]

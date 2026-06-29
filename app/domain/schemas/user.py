@@ -38,11 +38,6 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-class UserPlanUpdate(BaseModel):
-    """Schema para alteração de plano de assinatura"""
-    plan: PlanEnum
-
-
 class Token(BaseModel):
     """Schema do token de acesso"""
     access_token: str

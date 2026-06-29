@@ -2,6 +2,7 @@
 
 import enum
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import String, Boolean, DateTime, Enum
 from sqlalchemy.orm import Mapped, mapped_column
@@ -26,6 +27,10 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     plan: Mapped[PlanEnum] = mapped_column(Enum(PlanEnum), default=PlanEnum.basic, nullable=False)
+
+    # Cobrança (Stripe)
+    stripe_customer_id: Mapped[Optional[str]] = mapped_column(String, unique=True, index=True, nullable=True)
+    stripe_subscription_id: Mapped[Optional[str]] = mapped_column(String, index=True, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
