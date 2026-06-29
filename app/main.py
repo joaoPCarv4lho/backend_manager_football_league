@@ -1,10 +1,11 @@
 """Main FastAPI Application """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.core.database import Base, engine
-from app.presentation.api.routes import players, games, finances
+from app.presentation.api.routes import players, games, finances, auth
+from app.presentation.api.deps import get_current_user
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,9 +25,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(players.router, prefix="/api/v1", tags=["Players"])
-app.include_router(games.router, prefix="/api/v1", tags=["Games"])
-app.include_router(finances.router, prefix="/api/v1", tags=["Finances"])
+app.include_router(auth.router, prefix="/api/v1", tags=["Auth"])
+
+# Rotas de dados exigem usuário autenticado
+protected = [Depends(get_current_user)]
+app.include_router(players.router, prefix="/api/v1", tags=["Players"], dependencies=protected)
+app.include_router(games.router, prefix="/api/v1", tags=["Games"], dependencies=protected)
+app.include_router(finances.router, prefix="/api/v1", tags=["Finances"], dependencies=protected)
 
 @app.get("/", summary="Endpoint raiz da aplicação")
 def root():
