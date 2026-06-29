@@ -1,0 +1,29 @@
+# Ambiente virtual
+env/
+venv/
+.venv/
+
+# Bytecode Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Variáveis de ambiente (segredos)
+.env
+
+# Banco de dados local
+*.db
+*.sqlite
+*.sqlite3
+
+# Testes / cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# SO / editor
+.DS_Store
+.idea/
+.vscode/
