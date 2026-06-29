@@ -8,7 +8,7 @@ from app.core.database import get_db
 from app.application.service.auth_service import AuthService
 from app.infrastructure.repositories.user_repository import UserRepository
 from app.infrastructure.models.user import User
-from app.domain.schemas.user import UserCreate, UserLogin, UserResponse, Token
+from app.domain.schemas.user import UserCreate, UserLogin, UserResponse, Token, UserPlanUpdate
 from app.presentation.api.deps import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -40,3 +40,17 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), service: AuthService
 def me(current_user: User = Depends(get_current_user)):
     """Retorna os dados do usuário autenticado."""
     return current_user
+
+
+@router.patch("/me/plan", response_model=UserResponse, summary="Alterar plano de assinatura")
+def update_my_plan(
+    data: UserPlanUpdate,
+    current_user: User = Depends(get_current_user),
+    service: AuthService = Depends(get_auth_service),
+):
+    """
+    Altera o plano de assinatura do usuário autenticado (basic/pro).
+
+    Placeholder até a integração de cobrança — por ora o upgrade é imediato.
+    """
+    return service.update_plan(current_user.id, data.plan)

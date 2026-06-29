@@ -28,3 +28,13 @@ class UserRepository:
         self.db.commit()
         self.db.refresh(user)
         return user
+
+    def update_plan(self, user_id: int, plan: PlanEnum) -> Optional[User]:
+        """Atualiza o plano de assinatura de um usuário"""
+        user = self.get_by_id(user_id)
+        if not user:
+            return None
+        user.plan = plan
+        self.db.commit()
+        self.db.refresh(user)
+        return user
