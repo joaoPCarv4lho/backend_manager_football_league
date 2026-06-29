@@ -22,6 +22,7 @@ class Game(Base):
     date: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     team_white_score: Mapped[int] = mapped_column(Integer, default=0)
     team_red_score: Mapped[int] = mapped_column(Integer, default=0)
+    location: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     notes: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 

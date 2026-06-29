@@ -72,6 +72,21 @@ class PlayerRepository:
         self.db.commit()
         return result
 
+    def adjust_stats(self, player_id: int, goals_delta: int, assists_delta: int, games_delta: int) -> Optional[Player]:
+        """Aplica deltas aos totais acumulados do jogador (gols, assistências, jogos) e persiste"""
+
+        player = self.get_by_id(player_id)
+        if not player:
+            return None
+
+        player.total_goals = (player.total_goals or 0) + goals_delta
+        player.total_assists = (player.total_assists or 0) + assists_delta
+        player.total_games = (player.total_games or 0) + games_delta
+
+        self.db.commit()
+        self.db.refresh(player)
+        return player
+
     def update_scouts(self, player_id: int, goals: int, assis: int) -> Optional[Player]:
         """Atualiza o número de scouts de um jogador"""
 

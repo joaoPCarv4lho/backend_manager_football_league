@@ -80,11 +80,7 @@ class GameService:
         game = self.game_repo.get_by_id(game_id, with_players=True)
         if game:
             for gp in game.game_players:
-                player = self.player_repo.get_by_id(gp.player_id)
-                if player:
-                    player.goals -= gp.goals
-                    player.assists -= gp.assists
-                    player.matches_played -= 1
+                self.player_repo.adjust_stats(gp.player_id, -gp.goals, -gp.assists, -1)
         success = self.game_repo.delete(game_id)
         if not success:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Jogo não encontrado")
@@ -103,9 +99,10 @@ class GameService:
         if existing:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Jogador já adicionado a este jogo")
         
-        self.game_player_repo.create_game_player(player_data)
+        self.game_player_repo.create_game_player(player_data, game_id)
         self._recalculate_score(game_id)
-        self._update_player_stats(game_id)
+        # Atualiza apenas o jogador recém-adicionado (evita recontar os demais)
+        self.player_repo.adjust_stats(player_data.player_id, player_data.goals, player_data.assists, 1)
         return self.get_game(game_id)
 
     def get_game_to_stats(self, game_id: int) -> GameStatsResponse:
@@ -155,8 +152,8 @@ class GameService:
     def _recalculate_score(self, game_id: int):
         """Recalcula o placar do jogo com base nos jogadores e seus scouts"""
         
-        team_white_score = self.game_player_repo._sum_goals_by_team(game_id, "white")
-        team_red_score = self.game_player_repo._sum_goals_by_team(game_id, "red")
+        team_white_score = self.game_player_repo._sum_goals_by_team(game_id, "Branco")
+        team_red_score = self.game_player_repo._sum_goals_by_team(game_id, "Vermelho")
         self.game_repo.update_score(game_id, team_white_score, team_red_score)
 
     def _update_player_stats(self, game_id: int):
@@ -164,11 +161,7 @@ class GameService:
         
         game_players = self.game_player_repo.get_by_game(game_id)
         for gp in game_players:
-            player = self.player_repo.get_by_id(gp.player_id)
-            if player:
-                player.goals += gp.goals
-                player.assists += gp.assists
-                player.matches_played += 1
+            self.player_repo.adjust_stats(gp.player_id, gp.goals, gp.assists, 1)
 
     def _game_to_response(self, game) -> GameResponse:
         """Converte Game para GameResponse"""

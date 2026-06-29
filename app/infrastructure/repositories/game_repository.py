@@ -18,7 +18,6 @@ class GameRepository:
     def create_game(self, game_data: GameCreate) -> Game:
         """Cria um novo jogo com os jogadores associados"""
         game = Game(
-            game_id=game_data.id,
             date=game_data.date,
             location=game_data.location,
             notes=game_data.notes
@@ -110,11 +109,13 @@ class GamePlayerRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_game_player(self, game_player_data: GamePlayerCreate) -> GamePlayer:
+    def create_game_player(self, game_player_data: GamePlayerCreate, game_id: int) -> GamePlayer:
         """Adiciona um jogador a um jogo"""
+        data = game_player_data.model_dump()
+        data.pop("game_id", None)
         game_player = GamePlayer(
-            game_id=game_player_data.game_id,
-            **game_player_data.model_dump()
+            game_id=game_id,
+            **data
         )
         self.db.add(game_player)
         self.db.commit()
