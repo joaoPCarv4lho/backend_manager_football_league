@@ -49,11 +49,12 @@ class ServicePlayer:
         return PlayerResponse.model_validate(player)
     
     def update_player_scout(self, player_id: int, scout_update: PlayerScoutUpdate) -> PlayerStatsResponse:
-        """Atualiza os scouts (gosls, assistências, partidas) de um jogador"""
-        player = self.repository.update_scouts(
+        """Adiciona scouts (gols, assistências, partidas) ao total acumulado de um jogador"""
+        player = self.repository.adjust_stats(
             player_id,
             scout_update.goals if scout_update.goals is not None else 0,
-            scout_update.assists if scout_update.assists is not None else 0
+            scout_update.assists if scout_update.assists is not None else 0,
+            scout_update.matches_played if scout_update.matches_played is not None else 0,
         )
         if not player:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Jogador não encontrado")

@@ -1,6 +1,6 @@
 """Schemas Pydantic para Player"""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AliasChoices
 from datetime import datetime
 from typing import Optional
 
@@ -34,9 +34,9 @@ class PlayerResponse(PlayerBase):
     id: int = Field(..., title="ID do jogador")
     created_at: datetime = Field(..., title="Data de criação")
     updated_at: datetime = Field(..., title="Data de atualização")
-    goals: int = Field(0, title="Número de gols")
-    assists: int = Field(0, title="Número de assistências")
-    matches_played: int = Field(0, title="Número de partidas jogadas")
+    goals: int = Field(0, validation_alias=AliasChoices("total_goals", "goals"), title="Número de gols")
+    assists: int = Field(0, validation_alias=AliasChoices("total_assists", "assists"), title="Número de assistências")
+    matches_played: int = Field(0, validation_alias=AliasChoices("total_games", "matches_played"), title="Número de partidas jogadas")
 
     @property
     def total_scouts(self) -> int:
@@ -53,9 +53,10 @@ class PlayerStatsResponse(BaseModel):
     shirt_number: int = Field(..., title="Número da camisa")
     team: str = Field(..., title="Cor da camisa do time do Jogador")
     position: str = Field(..., title="Posição do jogador")
-    goals: int = Field(0, title="Número de gols")
-    assists: int = Field(0, title="Número de assistências")
-    matches_played: int = Field(0, title="Número de partidas jogadas")
+    goals: int = Field(0, validation_alias=AliasChoices("total_goals", "goals"), title="Número de gols")
+    assists: int = Field(0, validation_alias=AliasChoices("total_assists", "assists"), title="Número de assistências")
+    matches_played: int = Field(0, validation_alias=AliasChoices("total_games", "matches_played"), title="Número de partidas jogadas")
 
     class Config:
         from_attributes = True
+        populate_by_name = True

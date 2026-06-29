@@ -87,16 +87,3 @@ class PlayerRepository:
         self.db.refresh(player)
         return player
 
-    def update_scouts(self, player_id: int, goals: int, assis: int) -> Optional[Player]:
-        """Atualiza o número de scouts de um jogador"""
-
-        player = self.get_by_id(player_id)
-        if not player:
-            return None
-        
-        player.total_goals = player.total_goals + goals 
-        player.total_assists = player.total_assists + assis
-
-        self.db.commit()
-        self.db.refresh(player)
-        return player
