@@ -259,6 +259,11 @@ class FinanceService:
                 player_name=player.name if player else None
             ))
 
+        #Contadores de pagamentos
+        payments_count = len(payments_list)
+        paid_count = sum(1 for p in payments_list if p.paid)
+        pending_count = payments_count - paid_count
+
         #Retornar com pagamentos
         return FinanceDetailResponse(
             id=finance.id,
@@ -276,5 +281,8 @@ class FinanceService:
             total_income=getattr(finance, "total_income", Decimal("0.00")),
             net_balance=getattr(finance, "net_balance", Decimal("0.00")),
             notes=finance.notes,
+            payments_count=payments_count,
+            paid_count=paid_count,
+            pending_count=pending_count,
             payments=payments_list
         )
