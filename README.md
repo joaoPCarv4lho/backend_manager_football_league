@@ -63,7 +63,10 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edite o arquivo .env com suas configurações
 
-# 5. Executar servidor
+# 5. Aplicar as migrações do banco (cria/atualiza o schema)
+alembic upgrade head
+
+# 6. Executar servidor
 python app/main.py
 # ou
 uvicorn app.main:app --reload

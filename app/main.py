@@ -3,12 +3,11 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.core.database import Base, engine
 from app.presentation.api.routes import players, games, finances, auth, reports, billing
 from app.presentation.api.deps import get_current_user, require_plan
 from app.infrastructure.models.user import PlanEnum
 
-Base.metadata.create_all(bind=engine)
+# O schema do banco é gerenciado por migrações Alembic (alembic upgrade head).
 
 app = FastAPI(
     title=settings.APP_NAME,
